@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuadrantes Da Canio</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root{
+  --ink:#1b2a38;
+  --ink-soft:#5b6b7a;
+  --bg:#eef1f4;
+  --card:#ffffff;
+  --line:#dde3e9;
+  --accent:#c8402a;
+  --accent-dark:#a43120;
+
+  --partido-bg:#e6e8fb; --partido-tx:#2d3488;
+  --corrido-bg:#dff1e5; --corrido-tx:#1b6b3c;
+  --refuerzo-bg:#dcedfa; --refuerzo-tx:#17598a;
+  --camarero-bg:#fdecc8; --camarero-tx:#8a5a00;
+  --libre-bg:#f1f3f5;   --libre-tx:#98a4b0;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  padding:clamp(12px,3vw,28px);
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  line-height:1.4;
+}
+.wrap{max-width:1200px;margin:0 auto}
+
+/* Cabecera */
+.header{
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:14px;margin-bottom:16px;
+}
+h1{margin:0;font-size:clamp(1.25rem,3.4vw,1.8rem);letter-spacing:.2px}
+h1 small{display:block;font-size:.55em;font-weight:500;color:var(--ink-soft);margin-top:2px}
+
+.controles{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button,select{
+  font:inherit;font-weight:600;
+  min-height:42px;padding:0 14px;
+  border-radius:8px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);cursor:pointer;
+}
+button:hover,select:hover{border-color:var(--ink-soft)}
+button:focus-visible,select:focus-visible,.tab:focus-visible{outline:3px solid #7aa7d6;outline-offset:2px}
+button:disabled{opacity:.6;cursor:wait}
+.btn-main{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-main:hover{background:var(--accent-dark);border-color:var(--accent-dark)}
+
+/* Selector de cuadrante (dashboard) */
+.secciones{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.sec-btn{
+  min-height:48px;padding:0 22px;font-size:1rem;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.sec-btn.on{background:var(--ink);border-color:var(--ink);color:#fff}
+
+/* Pestañas de semana */
+.tabs{display:flex;gap:6px;background:var(--card);padding:5px;border-radius:10px;border:1px solid var(--line);flex-wrap:wrap}
+.tab{
+  min-height:36px;padding:0 14px;border:0;border-radius:7px;background:transparent;color:var(--ink-soft);
+}
+.tab.on{background:var(--ink);color:#fff}
+
+/* Leyenda */
+.leyenda{display:flex;flex-wrap:wrap;gap:8px 14px;margin:0 0 14px;font-size:.82rem;color:var(--ink-soft)}
+.leyenda span{display:inline-flex;align-items:center;gap:6px}
+.leyenda i{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid rgba(0,0,0,.08)}
+
+/* Semana */
+.semana{display:none;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:clamp(12px,2.4vw,22px)}
+.semana.activa{display:block}
+.semana h2{margin:0 0 12px;font-size:1.15rem}
+
+table{width:100%;border-collapse:separate;border-spacing:4px}
+th{
+  color:var(--ink-soft);font-size:.78rem;font-weight:700;padding:6px 4px;text-align:center;
+}
+th:first-child{text-align:left}
+td{
+  padding:8px 6px;text-align:center;font-size:.8rem;font-weight:600;
+  border-radius:8px;line-height:1.25;vertical-align:middle;
+}
+td.nombre{text-align:left;font-size:.95rem;background:none;padding-left:2px;white-space:nowrap}
+td.horas{background:var(--ink);color:#fff;font-size:.9rem;white-space:nowrap}
+.partido{background:var(--partido-bg);color:var(--partido-tx)}
+.corrido{background:var(--corrido-bg);color:var(--corrido-tx)}
+.refuerzo{background:var(--refuerzo-bg);color:var(--refuerzo-tx)}
+.camarero{background:var(--camarero-bg);color:var(--camarero-tx)}
+.libre{background:var(--libre-bg);color:var(--libre-tx);font-weight:500}
+.partido span{display:block;white-space:nowrap}
+
+/* Cuadrantes con más filas (camareros) */
+.denso td{font-size:.74rem;padding:7px 3px}
+.denso td.nombre{font-size:.8rem;white-space:normal;line-height:1.15;min-width:84px}
+
+/* Resumen */
+.resumen{
+  margin-top:16px;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;
+}
+.card{
+  background:var(--bg);border-radius:10px;padding:10px 12px;
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:.9rem;
+}
+.card b{font-weight:600}
+.card em{font-style:normal;font-weight:700}
+
+/* Pantallas medianas: tabla más ajustada */
+@media (max-width:1000px){
+  td{font-size:.72rem;padding:7px 3px}
+  td.nombre{font-size:.85rem}
+}
+
+/* Móvil: cada empleado es una tarjeta */
+@media screen and (max-width:760px){
+  body:not(.exportando) table,
+  body:not(.exportando) tbody{display:block}
+  body:not(.exportando) thead{display:none}
+  body:not(.exportando) tr{
+    display:block;border:1px solid var(--line);border-radius:12px;
+    padding:10px;margin-bottom:10px;background:#fff;
+  }
+  body:not(.exportando) td{
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    border-radius:6px;margin-top:4px;text-align:right;font-size:.85rem;padding:8px 10px;
+  }
+  body:not(.exportando) td::before{
+    content:attr(data-d);font-weight:700;color:var(--ink);opacity:.7;text-align:left;
+  }
+  body:not(.exportando) td.nombre{
+    margin:0 0 4px;padding:0 2px;font-size:1.05rem;display:block;text-align:left;
+  }
+  body:not(.exportando) td.nombre::before{content:none}
+  body:not(.exportando) td.horas{margin-top:8px}
+  body:not(.exportando) .partido span{display:inline;white-space:normal}
+  body:not(.exportando) .partido span+span::before{content:" / "}
+  .header{flex-direction:column;align-items:stretch}
+  .controles{justify-content:space-between}
+  .tabs{width:100%}
+  .tab{flex:1}
+  .secciones{display:grid;grid-template-columns:1fr 1fr}
+  .sec-btn{justify-content:center;padding:0 10px}
+}
+
+/* Impresión: todas las semanas del cuadrante activo, horizontal */
+@page{size:A4 landscape;margin:10mm}
+@media print{
+  body{background:#fff;padding:0}
+  .header,.leyenda,.secciones{display:none}
+  .semana{
+    display:block!important;border:0;border-radius:0;padding:0;
+    page-break-after:always;break-after:page;
+  }
+  .semana:last-of-type{page-break-after:auto;break-after:auto}
+  td{font-size:11px;padding:6px 3px}
+  .denso td{font-size:10px;padding:4px 2px}
+  .resumen{grid-template-columns:repeat(4,1fr)}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+/* Hoja para exportar a PDF (fuera de pantalla, tamaño fijo A4 horizontal) */
+.hoja{
+  width:1050px;padding:26px 30px 22px;background:#fff;color:var(--ink);
+}
+.hoja .cab{display:flex;justify-content:space-between;align-items:baseline;border-bottom:3px solid var(--accent);padding-bottom:8px;margin-bottom:14px}
+.hoja .cab h1{font-size:26px}
+.hoja .cab span{font-size:18px;font-weight:700;color:var(--accent)}
+.hoja table{border-spacing:5px}
+.hoja th{font-size:14px;padding:8px 4px}
+.hoja td{font-size:14px;padding:12px 6px}
+.hoja td.nombre{font-size:17px}
+.hoja td.horas{font-size:16px}
+.hoja .resumen{grid-template-columns:repeat(4,1fr);margin-top:14px}
+.hoja .leyenda{margin:14px 0 0;font-size:13px}
+.hoja.denso{padding:20px 26px 16px}
+.hoja.denso .cab{margin-bottom:8px}
+.hoja.denso table{border-spacing:4px}
+.hoja.denso th{font-size:12px;padding:4px}
+.hoja.denso td{font-size:12.5px;padding:5px 4px}
+.hoja.denso td.nombre{font-size:13px;min-width:130px}
+.hoja.denso td.horas{font-size:13px}
+.hoja.denso .resumen{grid-template-columns:repeat(5,1fr);margin-top:10px;gap:6px}
+.hoja.denso .card{padding:6px 10px;font-size:12.5px}
+.hoja.denso .leyenda{margin:10px 0 0;font-size:12px}
+.hoja *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#pdfStage{position:fixed;top:0;left:0;z-index:-1;background:#fff}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <h1 id="titulo">Cuadrante de cocina<small>Da Canio</small></h1>
+    <div class="controles">
+      <div class="tabs" id="tabs" role="tablist" aria-label="Semana"></div>
+      <button onclick="window.print()" aria-label="Imprimir">🖨 Imprimir</button>
+      <button class="btn-main" id="btnPdf" onclick="exportarPDF(false)">📄 PDF semana</button>
+      <button id="btnPdfTodo" onclick="exportarPDF(true)">📄 PDF todas</button>
+    </div>
+  </div>
+
+  <nav class="secciones" id="secciones" aria-label="Cuadrante"></nav>
+
+  <div class="leyenda" id="leyenda"></div>
+
+  <div id="semanas"></div>
+</div>
+
+<script>
+const DIAS=["L","M","X","J","V","S","D"];
+const NOMBRES_DIA=["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
+
+/* Turno partido en dos líneas */
+const pt=(a1,a2,b1,b2)=>`<span>${a1} a ${a2} /</span><span>${b1} a ${b2}</span>`;
+const LIBRE={cls:"libre",html:"Libre",h:0};
+
+/* ───────────── COCINA ───────────── */
+/* P=Partido  C=Corrido 14-22  R=Refuerzo 16-20  W=Camarero  L=Libre */
+const COCINA_A={
+  "Alfie":"PPLLCCC","Tomás":"PPLLWWW","Vitorino":"LLPPPPP","Shester":"LLPPPPP",
+  "Valter":"RRRRLLL","Anaysa":"PPLLCCC","Saleha":"LLPPPPP"
+};
+const COCINA_B={
+  "Alfie":"PPLLPPP","Tomás":"PPLLWWW","Vitorino":"LLPPCCC","Shester":"LLPPPPP",
+  "Valter":"RRRRLLL","Anaysa":"PPLLPPP","Saleha":"LLPPCCC"
+};
+
+/* ───────────── PIZZEROS ───────────── */
+const PIZ_A={"José":"LLPPPPP","Estafano":"PPLLCCC"};
+const PIZ_B={"José":"LLPPCCC","Estafano":"PPLLPPP"};
+
+/* ───────────── REPARTIDORES ───────────── */
+const REP_A={"Ricardo":"LLPPPPP","Kevin":"PPLLCCC","Leonardo":"NNNNLLL"};
+const REP_B={"Ricardo":"LLPPCCC","Kevin":"PPLLPPP","Leonardo":"NNNNLLL"};
+
+/* ───────────── CAMAREROS ─────────────
+   L=Libre  A1=12-20  A2=11:30-19:30  A3=12-16  (aperturas)
+   C1=15-23  C2=16-00 (cierres)
+   P0=12-16/19:30-23:30  P1=12:30-16/19:30-00  P2=13-16/19:30-23:30 (partidos)
+   K=Cocina */
+const CAM_1={
+  "MONA":"L L P0 P0 A1 A1 A1",
+  "KARINA DÍAZ MARTÍNEZ":"A2 A2 L L A2 A2 A2",
+  "MICHEL":"P0 P0 L L C2 C2 C1",
+  "MARTÍN PADRÓN":"A1 A1 A2 A2 L L A3",
+  "SERGIO GARCÍA":"C1 C1 L L C2 C2 C1",
+  "SAMUELEE RAFAELLE":"L L C1 C1 A1 A1 A1",
+  "AUGUSTO":"L L P0 P0 A1 A1 A1",
+  "SAYDALIS AROCHA":"P0 P0 L L C2 C2 C1",
+  "SONIA DÍAZ":"L L A1 A1 L L L",
+  "TOMAS":"K K L L P1 P1 P2"
+};
+const CAM_2={
+  "MONA":"L L C1 C1 A1 A1 A1",
+  "KARINA DÍAZ MARTÍNEZ":"A2 A2 L L A2 A2 A2",
+  "MICHEL":"C1 C1 L L C2 C2 C1",
+  "MARTÍN PADRÓN":"A1 A1 A2 A2 L L A3",
+  "SERGIO GARCÍA":"P0 P0 L L C2 C2 C1",
+  "SAMUELEE RAFAELLE":"L L P0 P0 A1 A1 A1",
+  "AUGUSTO":"L L P0 P0 C2 C2 C1",
+  "SAYDALIS AROCHA":"P0 P0 L L P1 P1 P2",
+  "SONIA DÍAZ":"L L A1 A1 L L L",
+  "TOMAS":"K K L L A1 A1 A1"
+};
+const CAM_3={
+  "MONA":"L L P0 P0 A1 A1 A1",
+  "KARINA DÍAZ MARTÍNEZ":"A2 A2 L L A2 A2 A2",
+  "MICHEL":"P0 P0 L L C2 C2 C1",
+  "MARTÍN PADRÓN":"A1 A1 A2 A2 L L A3",
+  "SERGIO GARCÍA":"P0 P0 L L P1 P1 P2",
+  "SAMUELEE RAFAELLE":"L L C1 C1 C2 C2 C1",
+  "AUGUSTO":"L L P0 P0 C2 C2 C1",
+  "SAYDALIS AROCHA":"C1 C1 L L A1 A1 A1",
+  "SONIA DÍAZ":"L L A1 A1 L L L",
+  "TOMAS":"K K L L A1 A1 A1"
+};
+const CAM_4={
+  "MONA":"L L P0 P0 C2 C2 C1",
+  "KARINA DÍAZ MARTÍNEZ":"A2 A2 L L A2 A2 A2",
+  "MICHEL":"P0 P0 L L P1 P1 P2",
+  "MARTÍN PADRÓN":"A1 A1 A2 A2 L L A3",
+  "SERGIO GARCÍA":"C1 C1 L L A1 A1 A1",
+  "SAMUELEE RAFAELLE":"L L C1 C1 C2 C2 C1",
+  "AUGUSTO":"L L P0 P0 C2 C2 C1",
+  "SAYDALIS AROCHA":"P0 P0 L L A1 A1 A1",
+  "SONIA DÍAZ":"L L A1 A1 L L L",
+  "TOMAS":"K K L L A1 A1 A1"
+};
+const CAM_5={
+  "MONA":"L L P0 P0 C2 C2 C1",
+  "KARINA DÍAZ MARTÍNEZ":"A2 A2 L L A2 A2 A2",
+  "MICHEL":"C1 C1 L L A1 A1 A1",
+  "MARTÍN PADRÓN":"A1 A1 A2 A2 L L A3",
+  "SERGIO GARCÍA":"P0 P0 L L A1 A1 A1",
+  "SAMUELEE RAFAELLE":"L L C1 C1 C2 C2 C1",
+  "AUGUSTO":"L L P0 P0 P1 P1 P2",
+  "SAYDALIS AROCHA":"P0 P0 L L A1 A1 A1",
+  "SONIA DÍAZ":"L L A1 A1 L L L",
+  "TOMAS":"K K L L C2 C2 C1"
+};
+const CAM_6={
+  "MONA":"L L C1 C1 C2 C2 C1",
+  "KARINA DÍAZ MARTÍNEZ":"A2 A2 L L A2 A2 A2",
+  "MICHEL":"P0 P0 L L A1 A1 A1",
+  "MARTÍN PADRÓN":"A1 A1 A2 A2 L L A3",
+  "SERGIO GARCÍA":"P0 P0 L L A1 A1 A1",
+  "SAMUELEE RAFAELLE":"L L P0 P0 P1 P1 P2",
+  "AUGUSTO":"L L P0 P0 A1 A1 A1",
+  "SAYDALIS AROCHA":"C1 C1 L L C2 C2 C1",
+  "SONIA DÍAZ":"L L A1 A1 L L L",
+  "TOMAS":"K K L L C2 C2 C1"
+};
+const CAM_7={
+  "MONA":"L L P0 P0 P1 P1 P2",
+  "KARINA DÍAZ MARTÍNEZ":"A2 A2 L L A2 A2 A2",
+  "MICHEL":"C1 C1 L L A1 A1 A1",
+  "MARTÍN PADRÓN":"A1 A1 A2 A2 L L A3",
+  "SERGIO GARCÍA":"P0 P0 L L C2 C2 C1",
+  "SAMUELEE RAFAELLE":"L L C1 C1 A1 A1 A1",
+  "AUGUSTO":"L L P0 P0 A1 A1 A1",
+  "SAYDALIS AROCHA":"P0 P0 L L C2 C2 C1",
+  "SONIA DÍAZ":"L L A1 A1 L L L",
+  "TOMAS":"K K L L C2 C2 C1"
+};
+
+/* ───────────── CONFIGURACIÓN DE SECCIONES ───────────── */
+const TURNO_PARTIDO_STD={cls:"partido",html:pt("12:00","16:00","19:30","23:30"),h:8};
+
+const SECCIONES={
+  cocina:{
+    icono:"👨‍🍳", etiqueta:"Cocina", titulo:"Cuadrante de cocina", empleado:"Empleado",
+    tipos:{
+      P:TURNO_PARTIDO_STD,
+      C:{cls:"corrido", html:"14-22", h:8},
+      R:{cls:"refuerzo",html:"16-20", h:4},
+      W:{cls:"camarero",html:"Camarero", h:0},
+      L:LIBRE
+    },
+    leyenda:[
+      ["partido","Partido: 12:00 a 16:00 / 19:30 a 23:30"],
+      ["corrido","Corrido: 14-22"],
+      ["refuerzo","Refuerzo: 16-20"],
+      ["camarero","Camarero"],
+      ["libre","Libre"]
+    ],
+    semanas:[COCINA_A,COCINA_B,COCINA_A,COCINA_B]
+  },
+  pizzeros:{
+    icono:"🍕", etiqueta:"Pizzeros", titulo:"Cuadrante de pizzeros", empleado:"Pizzero",
+    tipos:{
+      P:TURNO_PARTIDO_STD,
+      C:{cls:"corrido", html:"14:00-22:00", h:8},
+      L:LIBRE
+    },
+    leyenda:[
+      ["partido","Partido: 12:00 a 16:00 / 19:30 a 23:30"],
+      ["corrido","Corrido: 14:00-22:00"],
+      ["libre","Libre"]
+    ],
+    semanas:[PIZ_A,PIZ_B,PIZ_A,PIZ_B]
+  },
+  repartidores:{
+    icono:"🛵", etiqueta:"Repartidores", titulo:"Cuadrante de repartidores", empleado:"Repartidor",
+    tipos:{
+      P:TURNO_PARTIDO_STD,
+      C:{cls:"corrido", html:"14:00-22:00", h:8},
+      N:{cls:"refuerzo", html:"19:30-23:30", h:4},
+      L:LIBRE
+    },
+    leyenda:[
+      ["partido","Partido: 12:00 a 16:00 / 19:30 a 23:30"],
+      ["corrido","Corrido: 14:00-22:00"],
+      ["refuerzo","Leonardo: 19:30-23:30 (lunes a jueves)"],
+      ["libre","Libre"]
+    ],
+    semanas:[REP_A,REP_B,REP_A,REP_B]
+  },
+  camareros:{
+    icono:"🍽", etiqueta:"Camareros", titulo:"Cuadrante rotativo de camareros", empleado:"Camarero",
+    denso:true,
+    /* Horas semanales tal cual figuran en el cuadrante original */
+    horasFijas:{"MARTÍN PADRÓN":36,"SONIA DÍAZ":16},
+    horasPorDefecto:40,
+    tipos:{
+      A1:{cls:"corrido", html:"12:00 - 20:00", h:8},
+      A2:{cls:"corrido", html:"11:30 - 19:30", h:8},
+      A3:{cls:"corrido", html:"12:00 - 16:00", h:4},
+      C1:{cls:"refuerzo",html:"15:00 - 23:00", h:8},
+      C2:{cls:"refuerzo",html:"16:00 - 00:00", h:8},
+      P0:{cls:"partido", html:pt("12:00","16:00","19:30","23:30"), h:8},
+      P1:{cls:"partido", html:pt("12:30","16:00","19:30","00:00"), h:8},
+      P2:{cls:"partido", html:pt("13:00","16:00","19:30","23:30"), h:7},
+      K:{cls:"camarero", html:"Cocina", h:0},
+      L:LIBRE
+    },
+    leyenda:[
+      ["partido","Partido: 12:00 a 16:00 / 19:30 a 23:30 (y variantes)"],
+      ["corrido","Apertura: 11:30 / 12:00 de inicio"],
+      ["refuerzo","Cierre: 15:00 / 16:00 de inicio"],
+      ["camarero","Cocina"],
+      ["libre","Libre"]
+    ],
+    semanas:[CAM_1,CAM_2,CAM_3,CAM_4,CAM_5,CAM_6,CAM_7]
+  }
+};
+
+/* ───────────── LÓGICA ───────────── */
+const estado={sec:"cocina",sem:1};
+const fmt=n=>(Number.isInteger(n)?n:n.toString().replace(".",","))+" h";
+const codigos=c=>c.includes(" ")?c.split(" "):[...c];
+
+/* Fechas de cada semana: inicio el lunes 26 de octubre de 2026.
+   La semana se numera según su posición en el calendario mensual (lunes-domingo). */
+const FECHA_INICIO=new Date(2026,9,26);
+const MESES_ES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+function datosFechaSemana(n){
+  const inicio=new Date(FECHA_INICIO);
+  inicio.setDate(inicio.getDate()+(n-1)*7);
+  const fin=new Date(inicio);
+  fin.setDate(fin.getDate()+6);
+  const primerDiaMes=new Date(inicio.getFullYear(),inicio.getMonth(),1);
+  const desplazamiento=(primerDiaMes.getDay()+6)%7;
+  const numero=Math.ceil((inicio.getDate()+desplazamiento)/7);
+  const fecha=d=>`${d.getDate()} de ${MESES_ES[d.getMonth()]} de ${d.getFullYear()}`;
+  return {mes:MESES_ES[inicio.getMonth()],numero,inicio,fin,rango:`Del ${fecha(inicio)} al ${fecha(fin)}`};
+}
+function tituloSemana(n){
+  const f=datosFechaSemana(n);
+  return `${f.mes.charAt(0).toLocaleUpperCase("es-ES")+f.mes.slice(1)} · Semana ${f.numero} · ${f.rango}`;
+}
+
+function construirSecciones(){
+  const nav=document.getElementById("secciones");
+  nav.innerHTML=Object.entries(SECCIONES).map(([k,s])=>
+    `<button class="sec-btn" data-sec="${k}">${s.icono} ${s.etiqueta}</button>`).join("");
+  nav.addEventListener("click",e=>{
+    const b=e.target.closest(".sec-btn");
+    if(b) cambiarSeccion(b.dataset.sec);
+  });
+}
+
+function cambiarSeccion(k){
+  estado.sec=k;
+  estado.sem=1;
+  const s=SECCIONES[k];
+
+  document.querySelectorAll(".sec-btn").forEach(b=>b.classList.toggle("on",b.dataset.sec===k));
+  document.getElementById("titulo").innerHTML=`${s.titulo}<small>Da Canio</small>`;
+  document.title=`${s.titulo} · Da Canio`;
+  document.getElementById("btnPdfTodo").textContent=`📄 PDF ${s.semanas.length} semanas`;
+  document.getElementById("leyenda").innerHTML=
+    s.leyenda.map(([c,t])=>`<span><i style="background:var(--${c}-bg)"></i>${t}</span>`).join("");
+
+  const cont=document.getElementById("semanas");
+  const tabs=document.getElementById("tabs");
+  cont.innerHTML="";
+  tabs.innerHTML="";
+
+  s.semanas.forEach((datos,i)=>{
+    const n=i+1;
+    let filas="",resumen="";
+
+    for(const [nombre,cods] of Object.entries(datos)){
+      let total=0,celdas="";
+      codigos(cods).forEach((c,d)=>{
+        const t=s.tipos[c];
+        total+=t.h;
+        celdas+=`<td class="${t.cls}" data-d="${NOMBRES_DIA[d]}">${t.html}</td>`;
+      });
+      if(s.horasFijas) total=s.horasFijas[nombre]??s.horasPorDefecto;
+      filas+=`<tr><td class="nombre">${nombre}</td>${celdas}<td class="horas" data-d="Horas semanales">${fmt(total)}</td></tr>`;
+      resumen+=`<div class="card"><b>${nombre}</b><em>${fmt(total)}</em></div>`;
+    }
+
+    cont.insertAdjacentHTML("beforeend",`
+      <section id="semana${n}" class="semana${n===1?" activa":""}${s.denso?" denso":""}">
+        <h2>${s.etiqueta} · ${tituloSemana(n)}</h2>
+        <table>
+          <thead><tr><th>${s.empleado}</th>${DIAS.map(d=>`<th>${d}</th>`).join("")}<th>Horas</th></tr></thead>
+          <tbody>${filas}</tbody>
+        </table>
+        <div class="resumen">${resumen}</div>
+      </section>`);
+
+    tabs.insertAdjacentHTML("beforeend",
+      `<button class="tab${n===1?" on":""}" role="tab" data-n="${n}" aria-selected="${n===1}">S${n}</button>`);
+  });
+}
+
+function mostrarSemana(n){
+  estado.sem=Number(n);
+  document.querySelectorAll(".semana").forEach(s=>s.classList.toggle("activa",s.id==="semana"+n));
+  document.querySelectorAll(".tab").forEach(t=>{
+    const on=t.dataset.n===String(n);
+    t.classList.toggle("on",on);
+    t.setAttribute("aria-selected",on);
+  });
+}
+
+document.getElementById("tabs").addEventListener("click",e=>{
+  const b=e.target.closest(".tab");
+  if(b) mostrarSemana(b.dataset.n);
+});
+
+function crearHoja(n){
+  const s=SECCIONES[estado.sec];
+  const sec=document.getElementById("semana"+n);
+  const hoja=document.createElement("div");
+  hoja.className="hoja"+(s.denso?" denso":"");
+  hoja.innerHTML=`
+    <div class="cab"><h1>${s.titulo} · Da Canio</h1><span>${tituloSemana(n)}</span></div>
+    ${sec.querySelector("table").outerHTML}
+    <div class="resumen">${sec.querySelector(".resumen").innerHTML}</div>
+    ${document.getElementById("leyenda").outerHTML}`;
+  return hoja;
+}
+
+async function exportarPDF(todas){
+  const s=SECCIONES[estado.sec];
+  const btns=[document.getElementById("btnPdf"),document.getElementById("btnPdfTodo")];
+  const textos=btns.map(b=>b.textContent);
+  btns.forEach(b=>{b.disabled=true;b.textContent="Generando…"});
+
+  const activa=estado.sem;
+  const semanas=todas?s.semanas.map((_,i)=>i+1):[activa];
+  const nombreBase=`Cuadrante_${s.etiqueta}_DaCanio`;
+
+  const stage=document.createElement("div");
+  stage.id="pdfStage";
+  semanas.forEach(n=>stage.appendChild(crearHoja(n)));
+  document.body.appendChild(stage);
+  document.body.classList.add("exportando");
+
+  try{
+    await html2pdf().set({
+      margin:[0.3,0.3,0.3,0.3],
+      filename:todas?`${nombreBase}_${s.semanas.length}_semanas.pdf`:`${nombreBase}_Semana_${activa}.pdf`,
+      image:{type:"jpeg",quality:0.98},
+      html2canvas:{scale:3,useCORS:true,backgroundColor:"#ffffff",windowWidth:1100,scrollX:0,scrollY:0},
+      jsPDF:{unit:"in",format:"a4",orientation:"landscape"},
+      pagebreak:{mode:["css"],before:".hoja + .hoja",avoid:"tr"}
+    }).from(stage).save();
+  }finally{
+    stage.remove();
+    document.body.classList.remove("exportando");
+    btns.forEach((b,k)=>{b.disabled=false;b.textContent=textos[k]});
+  }
+}
+
+construirSecciones();
+cambiarSeccion("cocina");
+</script>
+</body>
+</html>
