@@ -223,13 +223,13 @@ const pt=(a1,a2,b1,b2)=>`<span>${a1} a ${a2} /</span><span>${b1} a ${b2}</span>`
 const LIBRE={cls:"libre",html:"Libre",h:0};
 
 /* ───────────── COCINA ───────────── */
-/* P=Partido  C=Corrido 14-22  R=Refuerzo 16-20  W=Camarero  L=Libre */
+/* P=Partido  C=Corrido 14-22  R=Refuerzo 16-20  L=Libre */
 const COCINA_A={
-  "Alfie":"PPLLCCC","Tomás":"PPLLWWW","Vitorino":"LLPPPPP","Shester":"LLPPPPP",
+  "Alfie":"PPLLCCC","Vitorino":"LLPPPPP","Shester":"LLPPPPP",
   "Valter":"RRRRLLL","Anaysa":"PPLLCCC","Saleha":"LLPPPPP"
 };
 const COCINA_B={
-  "Alfie":"PPLLPPP","Tomás":"PPLLWWW","Vitorino":"LLPPCCC","Shester":"LLPPPPP",
+  "Alfie":"PPLLPPP","Vitorino":"LLPPCCC","Shester":"LLPPPPP",
   "Valter":"RRRRLLL","Anaysa":"PPLLPPP","Saleha":"LLPPCCC"
 };
 
@@ -245,7 +245,6 @@ const REP_B={"Ricardo":"LLPPCCC","Kevin":"PPLLPPP","Leonardo":"NNNNLLL"};
    L=Libre  A1=12-20  A2=11:30-19:30  A3=12-16  (aperturas)
    C1=15-23  C2=16-00 (cierres)
    P0=12-16/19:30-23:30  P1=12:30-16/19:30-00  P2=13-16/19:30-23:30 (partidos)
-   K=Cocina
    NOTA: MONA ocupa el puesto y horario que tenía MARTÍN PADRÓN;
          GONZALO ocupa el horario que tenía MONA. */
 const CAM_1={
@@ -257,8 +256,7 @@ const CAM_1={
   "SAMUELEE RAFAELLE":"L L C1 C1 A1 A1 A1",
   "AUGUSTO":"L L P0 P0 A1 A1 A1",
   "SAYDALIS AROCHA":"P0 P0 L L C2 C2 C1",
-  "SONIA DÍAZ":"L L A1 A1 L L L",
-  "TOMAS":"K K L L P1 P1 P2"
+  "SONIA DÍAZ":"L L A1 A1 L L L"
 };
 const CAM_2={
   "GONZALO":"L L C1 C1 A1 A1 A1",
@@ -269,8 +267,7 @@ const CAM_2={
   "SAMUELEE RAFAELLE":"L L P0 P0 A1 A1 A1",
   "AUGUSTO":"L L P0 P0 C2 C2 C1",
   "SAYDALIS AROCHA":"P0 P0 L L P1 P1 P2",
-  "SONIA DÍAZ":"L L A1 A1 L L L",
-  "TOMAS":"K K L L A1 A1 A1"
+  "SONIA DÍAZ":"L L A1 A1 L L L"
 };
 const CAM_3={
   "GONZALO":"L L P0 P0 A1 A1 A1",
@@ -281,8 +278,7 @@ const CAM_3={
   "SAMUELEE RAFAELLE":"L L C1 C1 C2 C2 C1",
   "AUGUSTO":"L L P0 P0 C2 C2 C1",
   "SAYDALIS AROCHA":"C1 C1 L L A1 A1 A1",
-  "SONIA DÍAZ":"L L A1 A1 L L L",
-  "TOMAS":"K K L L A1 A1 A1"
+  "SONIA DÍAZ":"L L A1 A1 L L L"
 };
 const CAM_4={
   "GONZALO":"L L P0 P0 C2 C2 C1",
@@ -293,8 +289,7 @@ const CAM_4={
   "SAMUELEE RAFAELLE":"L L C1 C1 C2 C2 C1",
   "AUGUSTO":"L L P0 P0 C2 C2 C1",
   "SAYDALIS AROCHA":"P0 P0 L L A1 A1 A1",
-  "SONIA DÍAZ":"L L A1 A1 L L L",
-  "TOMAS":"K K L L A1 A1 A1"
+  "SONIA DÍAZ":"L L A1 A1 L L L"
 };
 const CAM_5={
   "GONZALO":"L L P0 P0 C2 C2 C1",
@@ -305,8 +300,7 @@ const CAM_5={
   "SAMUELEE RAFAELLE":"L L C1 C1 C2 C2 C1",
   "AUGUSTO":"L L P0 P0 P1 P1 P2",
   "SAYDALIS AROCHA":"P0 P0 L L A1 A1 A1",
-  "SONIA DÍAZ":"L L A1 A1 L L L",
-  "TOMAS":"K K L L C2 C2 C1"
+  "SONIA DÍAZ":"L L A1 A1 L L L"
 };
 const CAM_6={
   "GONZALO":"L L C1 C1 C2 C2 C1",
@@ -317,8 +311,7 @@ const CAM_6={
   "SAMUELEE RAFAELLE":"L L P0 P0 P1 P1 P2",
   "AUGUSTO":"L L P0 P0 A1 A1 A1",
   "SAYDALIS AROCHA":"C1 C1 L L C2 C2 C1",
-  "SONIA DÍAZ":"L L A1 A1 L L L",
-  "TOMAS":"K K L L C2 C2 C1"
+  "SONIA DÍAZ":"L L A1 A1 L L L"
 };
 const CAM_7={
   "GONZALO":"L L P0 P0 P1 P1 P2",
@@ -329,8 +322,7 @@ const CAM_7={
   "SAMUELEE RAFAELLE":"L L C1 C1 A1 A1 A1",
   "AUGUSTO":"L L P0 P0 A1 A1 A1",
   "SAYDALIS AROCHA":"P0 P0 L L C2 C2 C1",
-  "SONIA DÍAZ":"L L A1 A1 L L L",
-  "TOMAS":"K K L L C2 C2 C1"
+  "SONIA DÍAZ":"L L A1 A1 L L L"
 };
 
 /* ───────────── CONFIGURACIÓN DE SECCIONES ───────────── */
@@ -343,14 +335,12 @@ const SECCIONES={
       P:TURNO_PARTIDO_STD,
       C:{cls:"corrido", html:"14-22", h:8},
       R:{cls:"refuerzo",html:"16-20", h:4},
-      W:{cls:"camarero",html:"Camarero", h:0},
       L:LIBRE
     },
     leyenda:[
       ["partido","Partido: 12:00 a 16:00 / 19:30 a 23:30"],
       ["corrido","Corrido: 14-22"],
       ["refuerzo","Refuerzo: 16-20"],
-      ["camarero","Camarero"],
       ["libre","Libre"]
     ],
     semanas:[COCINA_A,COCINA_B,COCINA_A,COCINA_B]
@@ -400,14 +390,12 @@ const SECCIONES={
       P0:{cls:"partido", html:pt("12:00","16:00","19:30","23:30"), h:8},
       P1:{cls:"partido", html:pt("12:30","16:00","19:30","00:00"), h:8},
       P2:{cls:"partido", html:pt("13:00","16:00","19:30","23:30"), h:7},
-      K:{cls:"camarero", html:"Cocina", h:0},
       L:LIBRE
     },
     leyenda:[
       ["partido","Partido: 12:00 a 16:00 / 19:30 a 23:30 (y variantes)"],
       ["corrido","Apertura: 11:30 / 12:00 de inicio"],
       ["refuerzo","Cierre: 15:00 / 16:00 de inicio"],
-      ["camarero","Cocina"],
       ["libre","Libre"]
     ],
     semanas:[CAM_1,CAM_2,CAM_3,CAM_4,CAM_5,CAM_6,CAM_7]
