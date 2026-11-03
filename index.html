@@ -244,14 +244,11 @@ const REP_B={"Ricardo":"LLPPCCC","Kevin":"PPLLPPP","Leonardo":"NNNNLLL"};
 /* ───────────── CAMAREROS ─────────────
    L=Libre  A1=12-20  A2=11:30-19:30  A3=12-16  (aperturas)
    C1=15-23  C2=16-00 (cierres)
-   P0=12-16/19:30-23:30  P1=12:30-16/19:30-00  P2=13-16/19:30-23:30 (partidos)
-   NOTA: MONA ocupa el puesto y horario que tenía MARTÍN PADRÓN;
-         GONZALO ocupa el horario que tenía MONA. */
+   P0=12-16/19:30-23:30  P1=12:30-16/19:30-00  P2=13-16/19:30-23:30 (partidos) */
 const CAM_1={
   "GONZALO":"L L P0 P0 A1 A1 A1",
   "KARINA DÍAZ MARTÍNEZ":"A2 A2 L L A2 A2 A2",
   "MICHEL":"P0 P0 L L C2 C2 C1",
-  "MONA":"A1 A1 A2 A2 L L A3",
   "SERGIO GARCÍA":"C1 C1 L L C2 C2 C1",
   "SAMUELEE RAFAELLE":"L L C1 C1 A1 A1 A1",
   "AUGUSTO":"L L P0 P0 A1 A1 A1",
@@ -262,7 +259,6 @@ const CAM_2={
   "GONZALO":"L L C1 C1 A1 A1 A1",
   "KARINA DÍAZ MARTÍNEZ":"A2 A2 L L A2 A2 A2",
   "MICHEL":"C1 C1 L L C2 C2 C1",
-  "MONA":"A1 A1 A2 A2 L L A3",
   "SERGIO GARCÍA":"P0 P0 L L C2 C2 C1",
   "SAMUELEE RAFAELLE":"L L P0 P0 A1 A1 A1",
   "AUGUSTO":"L L P0 P0 C2 C2 C1",
@@ -273,7 +269,6 @@ const CAM_3={
   "GONZALO":"L L P0 P0 A1 A1 A1",
   "KARINA DÍAZ MARTÍNEZ":"A2 A2 L L A2 A2 A2",
   "MICHEL":"P0 P0 L L C2 C2 C1",
-  "MONA":"A1 A1 A2 A2 L L A3",
   "SERGIO GARCÍA":"P0 P0 L L P1 P1 P2",
   "SAMUELEE RAFAELLE":"L L C1 C1 C2 C2 C1",
   "AUGUSTO":"L L P0 P0 C2 C2 C1",
@@ -284,7 +279,6 @@ const CAM_4={
   "GONZALO":"L L P0 P0 C2 C2 C1",
   "KARINA DÍAZ MARTÍNEZ":"A2 A2 L L A2 A2 A2",
   "MICHEL":"P0 P0 L L P1 P1 P2",
-  "MONA":"A1 A1 A2 A2 L L A3",
   "SERGIO GARCÍA":"C1 C1 L L A1 A1 A1",
   "SAMUELEE RAFAELLE":"L L C1 C1 C2 C2 C1",
   "AUGUSTO":"L L P0 P0 C2 C2 C1",
@@ -295,7 +289,6 @@ const CAM_5={
   "GONZALO":"L L P0 P0 C2 C2 C1",
   "KARINA DÍAZ MARTÍNEZ":"A2 A2 L L A2 A2 A2",
   "MICHEL":"C1 C1 L L A1 A1 A1",
-  "MONA":"A1 A1 A2 A2 L L A3",
   "SERGIO GARCÍA":"P0 P0 L L A1 A1 A1",
   "SAMUELEE RAFAELLE":"L L C1 C1 C2 C2 C1",
   "AUGUSTO":"L L P0 P0 P1 P1 P2",
@@ -306,7 +299,6 @@ const CAM_6={
   "GONZALO":"L L C1 C1 C2 C2 C1",
   "KARINA DÍAZ MARTÍNEZ":"A2 A2 L L A2 A2 A2",
   "MICHEL":"P0 P0 L L A1 A1 A1",
-  "MONA":"A1 A1 A2 A2 L L A3",
   "SERGIO GARCÍA":"P0 P0 L L A1 A1 A1",
   "SAMUELEE RAFAELLE":"L L P0 P0 P1 P1 P2",
   "AUGUSTO":"L L P0 P0 A1 A1 A1",
@@ -317,7 +309,6 @@ const CAM_7={
   "GONZALO":"L L P0 P0 P1 P1 P2",
   "KARINA DÍAZ MARTÍNEZ":"A2 A2 L L A2 A2 A2",
   "MICHEL":"C1 C1 L L A1 A1 A1",
-  "MONA":"A1 A1 A2 A2 L L A3",
   "SERGIO GARCÍA":"P0 P0 L L C2 C2 C1",
   "SAMUELEE RAFAELLE":"L L C1 C1 A1 A1 A1",
   "AUGUSTO":"L L P0 P0 A1 A1 A1",
@@ -378,8 +369,8 @@ const SECCIONES={
   camareros:{
     icono:"🍽", etiqueta:"Camareros", titulo:"Cuadrante rotativo de camareros", empleado:"Camarero",
     denso:true,
-    /* Horas semanales tal cual figuran en el cuadrante original (Mona hereda las 36 h de Martín) */
-    horasFijas:{"MONA":36,"SONIA DÍAZ":16},
+    /* Horas semanales tal cual figuran en el cuadrante original */
+    horasFijas:{"SONIA DÍAZ":16},
     horasPorDefecto:40,
     tipos:{
       A1:{cls:"corrido", html:"12:00 - 20:00", h:8},
